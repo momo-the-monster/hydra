@@ -1,0 +1,74 @@
+extends layout
+
+block content
+    div#container
+        div#message
+        div#players
+    script(src='js/jquery-1.6.2.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='js/fastclick.js')
+    script.
+        $(function () {
+
+            FastClick.attach(document.body);
+
+            // Initialize variables
+            var $window = $(window);
+
+            // Socket Vars
+            var socket = io();
+            var connected;
+
+            // HTML ID Setup
+            var $message = $('#message');
+            var $players = $('#players');
+
+            socket.on('connect', function(){
+                showMessage("Connected");
+                //TODO: use hydra.eventNames.adminLogin here? is that possible?
+                socket.emit("adminLogin", function(roomID){
+                    showMessage("ROOM: " + roomID);
+                });
+            })
+
+            socket.on('playerJoined', function(username){
+                addPlayer(username);
+            })
+
+            socket.on('playerLeft', function (username){
+                removePlayer(username);
+            })
+
+            socket.on('disconnect', function(){
+                reset();
+            })
+
+            function addPlayer(username){
+                console.log("add player " + username);
+                var playerId = playerNameToId(username);
+                $players.append("<span class='player' id='" + playerId + "'>" + username + "</span>");
+            }
+
+            function removePlayer(username){
+                console.log("remove player " + username);
+                var playerId = playerNameToId(username);
+                $("#" + playerId).remove();
+            }
+
+            function reset() {
+                connected = false;
+            }
+
+            // strip whitespace, prefix with 'player'
+            function playerNameToId(username){
+                return "player" + username.replace(/\s+/g, '');
+            }
+
+            function showMessage(message){
+                $message.html(message);
+                console.log(message);
+            }
+
+            reset();
+
+        });

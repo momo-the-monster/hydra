@@ -1,0 +1,178 @@
+/* Fix user-agent */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+}
+
+html, input {
+  font-family:
+          "HelveticaNeue-Light",
+          "Helvetica Neue Light",
+          "Helvetica Neue",
+          Helvetica,
+          Arial,
+          "Lucida Grande",
+          sans-serif;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+    background-color: #008a92;
+}
+
+ul {
+  list-style: none;
+  word-wrap: break-word;
+}
+
+/* Pages */
+
+.pages {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.page {
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+/* Action page */
+
+.action.page {
+  display: none;
+}
+
+/* Components */
+
+#container {
+    margin: 0;
+    padding:0;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#curtain {
+    background: rgba(0, 0, 0, 0.75);
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    z-index: 2;
+}
+
+#message {
+    position: absolute;
+    color: white;
+    width: 100%;
+    top: 46vh;
+    text-align: center;
+    z-index: 2;
+    font-size: xx-large;
+    background-color: #000000;
+}
+
+#players {
+    padding: 60vh 0 0 0;
+    margin:0 auto;
+    text-align: center;
+}
+
+.player {
+    color:#ffffff;
+    padding: 10px;
+    margin:5px;
+    border:1px solid white;
+}
+
+#username {
+    background-color: rgba(255,255,255,0.8);
+    padding: 10px 20px;
+    font-weight: bolder;
+    position: absolute;
+    color:black;
+    z-index: 2;
+    bottom: 0;
+    left: 0;
+}
+
+#roomEntry{
+    color:white;
+    font-size: xx-large;
+    z-index: 3;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background-color: rgba(0,0,0,0.7);
+    padding-top: 10vh;
+
+}
+
+/* General button style (reset) */
+.btn {
+  border: 0px;
+  color: inherit;
+  cursor: pointer;
+  display: inline-block;
+  margin: auto;
+  letter-spacing: 1px;
+  font-weight: 700;
+  position: relative;
+    padding:0px;
+    width: 50%;
+    height: 50vh;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+    transition: background-color 0.1s;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-tap-highlight-color: transparent;  // i.e. Nexus5/Chrome and Kindle Fire HD 7''
+}
+
+#button-1 {
+    background-color: #1EAF4B;
+}
+
+#button-1.btn.pressed {
+    background-color: #BAFFD1;
+}
+
+#button-2 {
+    background-color: #DA1F2F;
+}
+
+#button-2.btn.pressed{
+    background-color: #FFBAC3;
+}
+
+#button-3 {
+    background-color: #FBB616;
+}
+
+#button-3.btn.pressed{
+    background-color: #FFFFB5;
+}
+
+#button-4 {
+    background-color: #15AEE5;
+}
+
+#button-4.btn.pressed{
+    background-color: #B5FFFF;
+}

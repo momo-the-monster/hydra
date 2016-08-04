@@ -1,0 +1,76 @@
+extends layout
+
+block content
+    div#container
+        ul.pages
+            li.action-page
+                button.btn#button-1(value=1) &nbsp;
+                button.btn#button-2(value=2) &nbsp;
+                button.btn#button-3(value=3) &nbsp;
+                button.btn#button-4(value=4) &nbsp;
+    script(src='https://code.jquery.com/jquery-1.10.2.min.js')
+    script(src='js/soundjs-0.6.2.min.js')
+    script(src='js/fastclick.js')
+    script.
+        $(function () {
+
+            FastClick.attach(document.body);
+
+            // Initialize variables
+            var $window = $(window);
+            var $actionPage = $('.action-page'); // The actionroom page
+
+
+            // Button Setup and Logic
+            var allowPresses = true;
+            var $button1 = $('#button-1');
+            var $button2 = $('#button-2');
+            var $button3 = $('#button-3');
+            var $button4 = $('#button-4');
+
+            createjs.Sound.registerSound("audio/green.mp3", "green");
+            createjs.Sound.registerSound("audio/red.mp3", "red");
+            createjs.Sound.registerSound("audio/yellow.mp3", "yellow");
+            createjs.Sound.registerSound("audio/blue.mp3", "blue");
+
+            $button1.soundID = "green";
+            $button2.soundID = "red";
+            $button3.soundID = "yellow";
+            $button4.soundID = "blue";
+
+            var buttons = [$button1, $button2, $button3, $button4];
+
+            var waitingForUp = false;
+
+            buttons.forEach(function(button){
+
+                button.bind('touchstart mousedown', function (e) {
+                    e.preventDefault();
+
+                    button.addClass("pressed");
+
+                    console.log("heard down, wait is " + waitingForUp);
+                    if(!allowPresses)
+                        return;
+
+                    if(waitingForUp){
+                        console.log('break!');
+                        return;
+                    }
+
+                    waitingForUp = true;
+
+                    // play sound
+                    createjs.Sound.play(button.soundID);
+
+                });
+            });
+
+            buttons.forEach(function(button){
+                button.bind('touchend mouseup', function (e) {
+                    button.removeClass("pressed");
+                    waitingForUp = false;
+                });
+            });
+
+        });

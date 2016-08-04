@@ -1,0 +1,282 @@
+extends layout
+
+block content
+    div#container
+        div#roomEntry Room ID
+            form#roomForm(name="join-room")
+                input#playerRoomField(type="text", name="room-id" autofocus autocomplete="off")
+                input#roomSubmit(type="submit", value="GO")
+        div#curtain
+        div#message
+        div#username
+        ul.pages
+            li.action-page
+                button.btn#button-1(value=1) &nbsp;
+                button.btn#button-2(value=2) &nbsp;
+                button.btn#button-3(value=3) &nbsp;
+                button.btn#button-4(value=4) &nbsp;
+    script(src='js/jquery-1.6.2.js')
+    script(src='js/faker.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='js/fastclick.js')
+    script.
+        $(function () {
+
+            FastClick.attach(document.body);
+
+            // Initialize variables
+            var $window = $(window);
+            var $actionPage = $('.action-page'); // The actionroom page
+
+            // Socket Vars
+            var socket = io();
+            var connected;
+            var playerDead;
+
+            // Idle Timeout
+            var idleTimeout;
+            var idleTimeoutDuration = 8000;
+
+            // Vibration feedback
+            var supportsVibrate = "vibrate" in navigator;
+
+            // Curtain Setup
+            var $curtain = $('#curtain');
+            var $message = $('#message');
+            var $username = $('#username');
+
+            // Automatically set username
+            var username = faker.name.firstName() + ' ' + faker.name.lastName();
+            $username.html(username);
+
+            // Vibration Patterns
+            var vibePatterns = {
+                win: [500, 250, 500, 250, 500],
+                correct: [],
+                gameOver: [1000]
+            };
+
+            // Button Setup and Logic
+            var allowPresses = true;
+            var $button1 = $('#button-1');
+            var $button2 = $('#button-2');
+            var $button3 = $('#button-3');
+            var $button4 = $('#button-4');
+
+            var buttons = [$button1, $button2, $button3, $button4];
+
+            var waitingForUp = false;
+
+            buttons.forEach(function(button){
+
+                button.bind('touchstart mousedown', function (e) {
+                    e.preventDefault();
+
+                    button.addClass("pressed");
+
+                    if(!allowPresses)
+                        return;
+
+                    if(waitingForUp){
+                        return;
+                    }
+
+                    waitingForUp = true;
+
+                    // vibrate if supported
+                    if(supportsVibrate)
+                            navigator.vibrate(50);
+
+                    resetIdleTimeout();
+
+                    checkPressAgainstPattern(button.attr('value'));
+                });
+            });
+
+            buttons.forEach(function(button){
+                button.bind('touchend mouseup', function (e) {
+                    waitingForUp = false;
+                    button.removeClass("pressed");
+                });
+            });
+
+            // Room Entry
+            $roomEntry = $('#roomEntry');
+            $roomForm = $('#roomForm');
+            $roomForm.submit(function(e){
+                e.preventDefault();
+                var form = this;
+                var playerRoom = $('#playerRoomField').val();
+                if(playerRoom.length == 4){
+                    console.log('trying to join room', playerRoom);
+                    playerJoinRoom(playerRoom);
+                } else {
+                    console.warn('You must enter a room value to enter');
+                }
+            })
+
+            // Socket Handling
+            socket.on('allowPresses', function(value){
+                if(playerDead)
+                    return;
+
+                allowPresses = value;
+                showCurtain(!value);
+            });
+
+            socket.on('declareWinner', function(winner){
+                if(winner === username){
+                    showMessage("You Win!");
+                    if (supportsVibrate)
+                        navigator.vibrate(vibePatternWin);
+                }
+            });
+
+            function showCurtain(value){
+                console.log('heard showcurtain with value ' + value + ' and curtain is ' + $curtain);
+                if (value)
+                    $curtain.show()
+                else
+                    $curtain.hide();
+            }
+
+            // Pattern storage
+            var pattern;
+            var currentPatternIndex = 0;
+            socket.on('setPattern', function (data) {
+                if(playerDead)
+                    return;
+
+                pattern = data;
+                currentPatternIndex = 0;
+                console.log('new pattern is ' + pattern);
+                showMessage('Go!');
+                resetIdleTimeout();
+            });
+
+            socket.on('playingPattern', function (data){
+                if(playerDead)
+                    return;
+
+               showMessage('Watch');
+            });
+
+            socket.on('startGame', function(){
+                showMessage('Game Starting');
+                playerDead = false;
+            });
+
+            socket.on('adminLeft', function(){
+                reset();
+            });
+
+            function checkPressAgainstPattern(value){
+                var nextValue = pattern[currentPatternIndex];
+                console.log('You Pressed', value, "target is", nextValue, new Date().getTime());
+                var success = (value == nextValue);
+                if(success){
+                    if(currentPatternIndex == (pattern.length - 1)){
+                        sendSuccess();
+                        allowPresses(false);
+                    } else {
+                        currentPatternIndex++;
+                    }
+                } else {
+                    die();
+                }
+            }
+
+            function resetIdleTimeout(){
+                clearIdleTimeout();
+                idleTimeout = setTimeout(die, idleTimeoutDuration);
+            }
+
+            function clearIdleTimeout(){
+                clearTimeout(idleTimeout);
+            }
+
+            function valueToColor(value){
+                switch(value){
+                    case 1:
+                        return 'green';
+                    break;
+                    case 2:
+                        return 'red';
+                    break;
+                    case 3:
+                        return 'yellow';
+                    break;
+                    case 4:
+                        return 'blue';
+                    break;
+
+                }
+            }
+
+            function sendSuccess(){
+                showMessage('Correct!');
+                // vibrate if supported
+                if (supportsVibrate){
+                    setTimeout(function(){ navigator.vibrate(vibePatterns.correct)}, 750);
+                }
+                allowPresses = false;
+                clearIdleTimeout();
+                setTimeout(function(){ socket.emit('playerPatternComplete');}, 250);
+            }
+
+            function die(){
+                playerDead = true;
+                showMessage('Game Over');
+                showCurtain(true);
+                allowPresses = false;
+                socket.emit('playerFailed');
+                clearIdleTimeout();
+                // vibrate if supported
+                if (supportsVibrate)
+                    navigator.vibrate(vibePatterns.gameOver);
+            }
+
+            // Sets the client's username
+            function playerLogin(name) {
+                // Tell the server your username
+                socket.emit('playerLogin', name);
+            }
+
+            function playerJoinRoom(name) {
+                socket.emit('playerJoinRoom', name, function(response){
+                    if(response.success == true){
+                        showMessage("Joined Room", name);
+                        $roomEntry.hide();
+                    } else {
+                        showMessage("Couldn't Join Room", name);
+                    }
+                });
+            }
+
+            socket.on('connect', function(){
+                playerLogin(username);
+                showMessage("Connected");
+            })
+
+            socket.on('disconnect', function(){
+                reset();
+            })
+
+            function reset() {
+                playerDead = true;
+                var connected = false;
+                pattern = [];
+                currentPatternIndex = 0;
+                showCurtain(true);
+                $roomEntry.show();
+                showMessage('Waiting For Game');
+            }
+
+            function showMessage(message){
+                $message.html(message);
+                console.log(message);
+            }
+
+            reset();
+
+        });
