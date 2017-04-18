@@ -24,6 +24,7 @@ block content
             var $players = $('#players');
 
             socket.on('connect', function(){
+                reset();
                 showMessage("Connected");
                 //TODO: use hydra.eventNames.adminLogin here? is that possible?
                 socket.emit("adminLogin", function(roomID){
@@ -43,6 +44,50 @@ block content
                 reset();
             })
 
+            socket.on('playerPressedButton', function(username, value){
+                var playerId = playerNameToId(username);
+                var color = "#FFFFFF";
+                switch (value) {
+                    case '1':
+                        color = "#1EAF4B";
+                        break;
+                    case '2':
+                        color = "#DA1F2F";
+                        break;
+                    case '3':
+                        color = "#FBB616";
+                        break;
+                    case '4':
+                        color = "#15AEE5";
+                        break;
+                    default:
+                        break;
+                }
+                // Set bg color of player box
+                $("#" + playerId).css("background-color",color);
+            })
+
+            function colorFromIndex(value){
+                var color = "#FFFFFF";
+                switch (value){
+                    case 1:
+                    color = "#1EAF4B";
+                    break;
+                    case 2:
+                    color = "#DA1F2F";
+                    break;
+                    case 3:
+                    color = "#FBB616";
+                    break;
+                    case 4:
+                    color = "#15AEE5";
+                    break;
+                    default:
+                    break;
+                }
+                return color;
+            }
+
             function addPlayer(username){
                 console.log("add player " + username);
                 var playerId = playerNameToId(username);
@@ -56,7 +101,7 @@ block content
             }
 
             function reset() {
-                connected = false;
+                $players.empty();
             }
 
             // strip whitespace, prefix with 'player'

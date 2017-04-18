@@ -9,6 +9,12 @@ block content
         div#curtain
         div#message
         div#username
+        ul.pages
+            li.action-page
+                button.btn#button-1(value=1) &nbsp;
+                button.btn#button-2(value=2) &nbsp;
+                button.btn#button-3(value=3) &nbsp;
+                button.btn#button-4(value=4) &nbsp;
     script(src='js/jquery-1.6.2.js')
     script(src='js/faker.js')
     script(src='/socket.io/socket.io.js')
@@ -24,7 +30,9 @@ block content
 
             // Socket Vars
             var socket = io();
-            var connected;
+
+            // Vibration feedback
+            var supportsVibrate = "vibrate" in navigator;
 
             // Curtain Setup
             var $curtain = $('#curtain');
@@ -34,6 +42,48 @@ block content
             // Automatically set username
             var username = faker.name.firstName() + ' ' + faker.name.lastName();
             $username.html(username);
+
+            // Button Setup and Logic
+            var allowPresses = true;
+            var $button1 = $('#button-1');
+            var $button2 = $('#button-2');
+            var $button3 = $('#button-3');
+            var $button4 = $('#button-4');
+
+            var buttons = [$button1, $button2, $button3, $button4];
+
+            var waitingForUp = false;
+
+            buttons.forEach(function(button){
+
+                button.bind('touchstart mousedown', function (e) {
+                    e.preventDefault();
+
+                    button.addClass("pressed");
+
+                    if(!allowPresses)
+                        return;
+
+                    if(waitingForUp){
+                        return;
+                    }
+
+                    waitingForUp = true;
+
+                    // vibrate if supported
+                    if(supportsVibrate)
+                        navigator.vibrate(50);
+
+                    socket.emit('buttonPressed', button.attr('value'));
+                });
+            });
+
+            buttons.forEach(function(button){
+                button.bind('touchend mouseup', function (e) {
+                    waitingForUp = false;
+                    button.removeClass("pressed");
+                });
+            });
 
             // Room Entry
             $roomEntry = $('#roomEntry');
@@ -48,17 +98,16 @@ block content
                 } else {
                     console.warn('You must enter a room value to enter');
                 }
-            });
+            })
 
             function showCurtain(value){
-                console.log('heard showcurtain with value ' + value + ' and curtain is ' + $curtain);
                 if (value)
                     $curtain.show()
                 else
                     $curtain.hide();
             }
 
-            // Socket Handling
+
             socket.on('adminLeft', function(){
                 reset();
             });
@@ -74,6 +123,7 @@ block content
                     if(response.success == true){
                         showMessage("Joined Room", name);
                         $roomEntry.hide();
+                        showCurtain(false);
                     } else {
                         showMessage("Couldn't Join Room", name);
                     }
@@ -90,7 +140,6 @@ block content
             })
 
             function reset() {
-                connected = false;
                 showCurtain(true);
                 $roomEntry.show();
                 showMessage('Waiting For Game');

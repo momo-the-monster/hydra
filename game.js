@@ -9,9 +9,8 @@ module.exports.respond = function(io, socket){
 
     reset();
 
-    // Admin requests GameStart
-    socket.on(eventNames.requestStartGame, function(){
-        startGame(socket.game);
+    socket.on(eventNames.buttonPressed, function(value){
+        io.sockets.to(socket.game.adminID).emit(eventNames.playerPressedButton, socket.username, value);
     });
 
     // Disconnected
@@ -29,19 +28,10 @@ module.exports.respond = function(io, socket){
             if(socket.game.roomID){
                 socket.game.numPlayers--;
                 socket.game.numPlayersAlive--;
-//                checkEndgame(socket.game);
             }
         }
     });
 
     function reset(){
-    }
-
-    function startGame(game) {
-        game.numPlayersAlive = game.numPlayers;
-        if(game.numPlayers == 1)
-            game.gameType = models.gameTypes.solo;
-        io.to(game.roomID).emit(eventNames.startGame, {gameType: game.gameType});
-        game.inProgress = true;
     }
 };
