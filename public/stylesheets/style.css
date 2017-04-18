@@ -105,7 +105,7 @@ ul {
     position: absolute;
     color:black;
     z-index: 2;
-    bottom: 0;
+    top: 0;
     left: 0;
 }
 
