@@ -1,10 +1,13 @@
 # Hydra Node Server
+
 Enabling Multiplayer experiences using people's own devices
 
 ## Installation
+
 Clone the repo and use `npm install`
 
 ## Usage
+
 This project includes the Hydra server and a barebones application as an example.
 Everything specific to Hydra lives in the 'hydra' folder and should probably not be touched.
 * game.js holds the game logic for your game/app.
@@ -35,4 +38,5 @@ Written by Surya Buchwald
 Inspired by Jackbox.tv and Kevin's Experiments
 
 ## License
+
 MIT
