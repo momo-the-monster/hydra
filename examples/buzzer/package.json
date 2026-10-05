@@ -1,0 +1,23 @@
+{
+  "name": "@hydra/example-buzzer",
+  "private": true,
+  "type": "module",
+  "description": "Game-show buzzers: a shared host screen plus everyone's phones.",
+  "scripts": {
+    "dev": "tsx watch --conditions=source src/server.ts",
+    "build": "vite build",
+    "start": "NODE_ENV=production tsx --conditions=source src/server.ts",
+    "typecheck": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "vite": "^8.3.2"
+  },
+  "dependencies": {
+    "@hydra/client": "1.0.0-alpha.0",
+    "@hydra/server": "1.0.0-alpha.0",
+    "express": "^5.2.1",
+    "socket.io": "^4.8.4",
+    "tsx": "^4.23.15"
+  }
+}

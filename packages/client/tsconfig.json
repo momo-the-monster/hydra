@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": ["es2022", "dom"]
+  },
+  "include": ["src"],
+  "references": [{ "path": "../protocol" }]
+}

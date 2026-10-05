@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#14111f" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ff2e88'/%3E%3C/svg%3E" />
+    <title>Buzzer · Host</title>
+  </head>
+  <body class="host">
+    <main>
+      <section id="lobby" class="card" hidden>
+        <h1>Buzzer</h1>
+        <p class="muted">Put this screen where everyone can see it, then open a room.</p>
+        <button id="start" type="button">Open a room</button>
+        <p id="lobby-error" class="error" role="alert"></p>
+      </section>
+
+      <section id="board" hidden>
+        <header class="join-info">
+          <p>Join at <strong id="join-url"></strong> with code</p>
+          <p id="room-code" class="code"></p>
+        </header>
+        <div class="columns">
+          <section class="panel">
+            <h2>Buzzes</h2>
+            <ol id="buzzes" class="buzzes"></ol>
+            <p id="no-buzzes" class="muted">Waiting for someone to buzz…</p>
+            <div class="controls">
+              <button id="reset" type="button" class="secondary">Clear</button>
+              <button id="lock" type="button" class="secondary">Lock buzzers</button>
+            </div>
+          </section>
+          <section class="panel">
+            <h2>Players</h2>
+            <ul id="players" class="players"></ul>
+            <p id="no-players" class="muted">No one has joined yet.</p>
+          </section>
+        </div>
+        <p id="toast" class="toast" aria-live="polite"></p>
+      </section>
+    </main>
+    <p id="connection" class="connection" hidden></p>
+    <script type="module" src="/src/host.ts"></script>
+  </body>
+</html>

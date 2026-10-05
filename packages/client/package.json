@@ -1,0 +1,23 @@
+{
+  "name": "@hydra/client",
+  "version": "1.0.0-alpha.0",
+  "description": "Hydra browser client: join rooms, send actions, receive state, survive reconnects.",
+  "license": "MIT",
+  "author": "Surya Buchwald",
+  "type": "module",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@hydra/protocol": "1.0.0-alpha.0",
+    "socket.io-client": "^4.8.0"
+  }
+}

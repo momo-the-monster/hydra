@@ -1,0 +1,19 @@
+{
+  "name": "@hydra/protocol",
+  "version": "1.0.0-alpha.0",
+  "description": "Wire protocol types shared by the Hydra server and client.",
+  "license": "MIT",
+  "author": "Surya Buchwald",
+  "type": "module",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

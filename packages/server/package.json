@@ -1,0 +1,25 @@
+{
+  "name": "@hydra/server",
+  "version": "1.0.0-alpha.0",
+  "description": "Hydra server: rooms, roles, actions and state sync for phone-as-controller multiplayer games.",
+  "license": "MIT",
+  "author": "Surya Buchwald",
+  "type": "module",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@hydra/protocol": "1.0.0-alpha.0"
+  },
+  "peerDependencies": {
+    "socket.io": "^4.8.0"
+  }
+}
